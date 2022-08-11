@@ -1,8 +1,8 @@
 pipeline {
-  agent any
-  options {
-    buildDiscarder(logRotator(numToKeepStr: '2', artifactNumToKeepStr: '1'))
-  } 
+  agent {
+   label 'master'
+  }
+  
   stages {
   stage('Unit Tests') {
       steps {
@@ -17,11 +17,8 @@ pipeline {
        }}
 
    stage('deploy') {
-      agent {
-        label 'apache'
-      }
       steps {
-        sh "cp dist/rectangle_.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}/"
+        sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}/"
       }
     }
 
