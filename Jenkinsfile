@@ -8,7 +8,7 @@ pipeline {
             }
 
       steps {
-        sayHello 'Awesome Student!'
+        echo 'Awesome Student!'
       }
     }
       
