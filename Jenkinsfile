@@ -5,9 +5,7 @@ pipeline {
     
   stages {
   stage('Unit Tests') {
-    agent {
-   label 'apache'
-  }
+   
       steps {
         sh 'ant -f test.xml -v'
         junit 'reports/result.xml'
@@ -15,9 +13,7 @@ pipeline {
     }
   
   stage('build') {
-    agent {
-   label 'apache'
-  }
+    
       steps {
         sh 'ant -f build.xml -v'
        }
@@ -31,15 +27,7 @@ pipeline {
       steps {
         sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/"
       } }
-    stage('Running on Ubuntu') {
-      agent {
-      label 'SlaveL1'
-      }
-      steps{
-      sh "apt-get http://18.204.225.199:8081/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
-        sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
-      }
-    }
+    
     
    } 
  }
