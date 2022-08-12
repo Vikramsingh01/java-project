@@ -31,10 +31,10 @@ pipeline {
       } }
     stage('Running on centos') {
       agent {
-      label 'apache'
+      label 'SlaveL1'
       }
       steps{
-      sh "wget http://brandon4231.mylabserver.com/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+      sh "wget http://18.204.225.199:8081/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
       }
     }
