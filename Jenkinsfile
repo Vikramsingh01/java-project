@@ -1,6 +1,10 @@
 pipeline {
     agent none
     
+    environment {
+    MAJOR_VERSION = 1
+  }
+    
   stages {
         stage('Say Hello') {
             agent {
@@ -40,15 +44,26 @@ pipeline {
     label 'apache'
     }
       steps {
-        sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/"
+          sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/"
       } }
     stage("Running on master built in node") {
       agent {
         label 'apache'
       }
       steps {
-        sh "wget http://18.204.225.199:8081/rectangles/all/rectangle_${env.BUILD_NUMBER}.jar"
-        sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 3 4"
+        sh "wget http://18.204.225.199:8081/rectangles/all/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
+      }
+    }
+      stage('Promote to Green') {
+      agent {
+        label 'apache'
+      }
+      when {
+        branch 'development'
+      }
+      steps {
+        sh "cp /var/www/html/rectangles/all/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
       }
     }
    } 
