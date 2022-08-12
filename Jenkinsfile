@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+    label 'apache'
+    }
     
   stages {
   stage('Unit Tests') {
