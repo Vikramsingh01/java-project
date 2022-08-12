@@ -1,18 +1,71 @@
 pipeline {
-  agent none
+    agent none
+    
+  stages {
+        stage('Say Hello') {
+            agent {
+            label 'SlaveL1'
+            }
 
+      steps {
+        echo 'Awesome Student!'
+      }
+    }
+      
+  stage('Unit Tests') {
+   agent {
+    label 'apache'
+    }
+      steps {
+        sh 'ant -f test.xml -v'
+        junit 'reports/result.xml'
+      }
+    }
+  
+  stage('build') {
+    agent {
+    label 'apache'
+    }
+      steps {
+        sh 'ant -f build.xml -v'
+       }
+     post {
+     success {
+        archiveArtifacts artifacts: 'dist/*.jar', fingerprint: true
+       }}
+  }
+
+   stage('deploy') {
+       agent {
+    label 'apache'
+    }
+      steps {
+        sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/"
+      } }
+    stage("Running on master built in node") {
+      agent {
+        label 'apache'
+      }
+      steps {
+        sh "wget http://18.204.225.199:8081/rectangles/all/rectangle_${env.BUILD_NUMBER}.jar"
+        sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 3 4"
+      }
+    }
+   } 
+ }
+
+/*
+pipeline {
+  agent none
   environment {
     MAJOR_VERSION = 1
   }
-
   parameters {
     string(name: 'devBuild', defaultValue: 'none', description: 'Build number for the upstream dev build.')
   }
-
   stages {
     stage('Say Hello') {
       agent any
-
       steps {
         sayHello 'Awesome Student!'
       }
@@ -135,3 +188,4 @@ pipeline {
     }
   }
 }
+*/
